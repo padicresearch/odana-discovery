@@ -1,0 +1,56 @@
+syntax = "proto3";
+package odana.discovery;
+import "google/protobuf/empty.proto";
+option go_package="odana.discovery";
+
+
+message NodeDetails {
+    uint32 chain_id = 1;
+    string name = 2;
+    string network = 3;
+    string version = 4;
+    bytes pub_key = 5;
+    bytes nonce = 6;
+    repeated string multiaddrs = 7;
+    optional uint64 startup_time = 8;
+    optional string target_os = 9;
+    optional string target_arch = 10;
+    optional SystemInfo sys_info = 11;
+}
+
+message SystemInfo {
+    optional string cpu = 1;
+    optional string memory = 2;
+    optional uint64 core_count = 3;
+    optional bool is_virtual = 4;
+}
+
+message Connection {
+    bytes genesis_hash = 1;
+    NodeDetails node = 2;
+}
+
+message Block {
+    bytes hash = 1;
+    uint64 height = 2;
+}
+
+message NodeStatus {
+    optional uint64 peer_count = 1;
+    optional uint64 tx_count = 2;
+    optional Block block = 3;
+}
+
+message FindClosestPeersRequest {
+    string node_id = 1;
+}
+
+message FindClosestPeersResponse {
+    repeated string peers = 1;
+}
+
+service TelemetryService {
+    rpc EstablishConnection(Connection) returns (google.protobuf.Empty);
+    rpc Status(NodeStatus) returns (google.protobuf.Empty);
+    rpc FindClosestPeers(FindClosestPeersRequest) returns (FindClosestPeersResponse);
+}
