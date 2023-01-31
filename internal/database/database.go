@@ -1,16 +1,16 @@
 package database
 
 import (
-	influxdb2 "github.com/influxdata/influxdb-client-go/v2"
-	"github.com/influxdata/influxdb-client-go/v2/api"
+	"context"
+	"fmt"
 	"github.com/padicresearch/odana-discovery/internal/util"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func DatabaseConfig() api.WriteAPIBlocking {
-	bucket := util.GetVariableWith("BUCKET")
-	org := util.GetVariableWith("ORG")
-	token := util.GetVariableWith("INFLUX_ODANA_TOKEN")
-	url := util.GetVariableWith("INFLUX_URL")
-	client := influxdb2.NewClient(url, token)
-	return client.WriteAPIBlocking(org, bucket)
+func ConnectToMongoDB() (*mongo.Database, error) {
+	ctx := context.Background()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(util.GetVariableWith("DB_URL")))
+	fmt.Println("Db Connected")
+	return client.Database("odana"), err
 }
