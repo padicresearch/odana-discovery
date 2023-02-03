@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/padicresearch/odana-discovery/internal/config"
 	pb "github.com/padicresearch/odana-discovery/internal/proto"
 	"github.com/padicresearch/odana-discovery/internal/routeGuide"
 	"google.golang.org/grpc"
@@ -14,7 +15,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	grpcServer := grpc.NewServer()
+	grpcServer := grpc.NewServer(grpc.StatsHandler(&config.Handler{}))
 	pb.RegisterTelemetryServiceServer(grpcServer, &routeGuide.Server{})
 
 	err = grpcServer.Serve(con)
